@@ -22,6 +22,8 @@ extern int yyerror(std::string msg);
 "#def"    { return TDEF; }
 [0-9]+    { yylval.lexeme = std::string(yytext); return TINT_LIT; }
 [a-zA-Z]+ { yylval.lexeme = std::string(yytext); return TIDENT; }
+"//".* /* ignore comments */
+"/*"( [^*] | (\*+[^*/]) )*\*+\/
 [ \t\n]   { /* skip */ }
 .         { yyerror("unknown char"); }
 
