@@ -2,7 +2,7 @@
 /* sdfkjdsh
 djfhdsk
 */
-#def ABC 12;
-dbg ABC;
-let a=4;
-dbg a+ABC;
+// #def ABC 12;
+// dbg ABC;
+let a=5;
+dbg a+a;

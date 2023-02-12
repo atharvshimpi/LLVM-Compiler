@@ -75,11 +75,10 @@ extern int yydebug;
     INT = 264,                     /* INT  */
     TLET = 265,                    /* TLET  */
     TDBG = 266,                    /* TDBG  */
-    TDEF = 267,                    /* TDEF  */
-    TSCOL = 268,                   /* TSCOL  */
-    TLPAREN = 269,                 /* TLPAREN  */
-    TRPAREN = 270,                 /* TRPAREN  */
-    TEQUAL = 271                   /* TEQUAL  */
+    TSCOL = 267,                   /* TSCOL  */
+    TLPAREN = 268,                 /* TLPAREN  */
+    TRPAREN = 269,                 /* TRPAREN  */
+    TEQUAL = 270                   /* TEQUAL  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif

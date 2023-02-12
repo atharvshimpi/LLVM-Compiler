@@ -27,7 +27,7 @@ int yyerror(std::string msg);
 
 %token TPLUS TDASH TSTAR TSLASH
 %token <lexeme> TINT_LIT TIDENT
-%token INT TLET TDBG TDEF
+%token INT TLET TDBG
 %token TSCOL TLPAREN TRPAREN TEQUAL
 
 %type <node> Expr Stmt
@@ -64,17 +64,6 @@ Stmt : TLET TIDENT TEQUAL Expr
      | TDBG Expr
      { 
         $$ = new NodeDebug($2);
-     }
-     |TDEF TIDENT Expr
-     {
-        if(symbol_table.contains($2)) {
-            // tried to redeclare variable, so error
-            yyerror("tried to redeclare variable.\n");
-        } else {
-            symbol_table.insert($2);
-
-            $$ = new NodeAssn($2, $3);
-        }
      }
      ;
 
