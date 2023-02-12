@@ -1,8 +1,2 @@
-// My name is Shobhit Gangwal
-/* sdfkjdsh
-djfhdsk
-*/
-#def ABC 12;
-dbg ABC;
-let a=4;
-dbg a+ABC;
+let abc = 123 * 20 + 20 + (22 / 2) - 3;
+dbg abc + abc;
