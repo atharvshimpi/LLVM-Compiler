@@ -1,2 +1,6 @@
-let abc = 123 * 20 + 20 + (22 / 2) - 3;
-dbg abc + abc;
+#def DEBUG 10
+let x = 5;
+#undef DEBUG
+#ifdef DEBUG
+dbg x;
+#endif
