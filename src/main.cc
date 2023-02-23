@@ -5,31 +5,32 @@
 #include <cstdio>
 #include <cstring>
 #include <fstream>
-
+ 
 #include "parser.hh"
 #include "ast.hh"
 #include "llvmcodegen.hh"
-
+ 
 extern FILE *yyin;
 extern int yylex();
 extern char *yytext;
-
+ 
 extern FILE *fooin;
 extern FILE *fooout;
 extern int foolex();
 extern char *footext;
-
+ 
 extern std::string key;
 extern std::unordered_map<std::string, std::string> map;
-
+extern int flag;
+ 
 NodeStmts *final_values;
-
+ 
 #define ARG_OPTION_L 0
 #define ARG_OPTION_P 1
 #define ARG_OPTION_S 2
 #define ARG_OPTION_O 3
 #define ARG_FAIL -1
-
+ 
 int parse_arguments(int argc, char *argv[]) {
 	if (argc == 3 || argc == 4) {
 		if (strlen(argv[2]) == 2 && argv[2][0] == '-') {
@@ -115,6 +116,12 @@ void preprocess() {
 				fclose(fooin);
 				exit(1);
 			}
+			if(token==11){
+				std::cerr<<"else before ifdef"<<std::endl;
+				remove("temp");
+				fclose(fooin);
+				exit(1);
+			}
 			contents += temp;
  
 		} while(token != 0);
@@ -123,7 +130,7 @@ void preprocess() {
 		otemp<<contents;
 		otemp.close();
 	} while(count > 0);
- 
+	
 	fooin = fopen("temp", "r");
 	contents = "";
 	do {
@@ -133,6 +140,13 @@ void preprocess() {
 			contents += temp;
  
 	} while(token != 0);
+ 
+	if(flag!=0){
+		std::cerr<<"\nno endif"<<std::endl;
+		remove("temp");
+		fclose(fooin);
+		exit(1);
+	}
  
 	// Printing final preprocessed code
 	std::cout<<"PRE"<<std::endl<<contents<<std::endl;
