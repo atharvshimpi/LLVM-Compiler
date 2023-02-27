@@ -29,12 +29,13 @@ int yyerror(std::string msg);
 %token <lexeme> TINT_LIT TIDENT
 %token INT TLET TDBG
 %token TSCOL TLPAREN TRPAREN TEQUAL
+%token TCOL TQUES
 
 %type <node> Expr Stmt
 %type <stmts> Program StmtList
 
 %left TPLUS TDASH
-%left TSTAR TSLASH
+%left TSTAR TSLASH TEQUAL TQUES TCOL
 
 %%
 
@@ -61,6 +62,10 @@ Stmt : TLET TIDENT TEQUAL Expr
             $$ = new NodeDecl($2, $4);
         }
      }
+     | TIDENT TEQUAL Expr
+     {
+        $$ = new NodeDecl2($1,$3);
+     }
      | TDBG Expr
      { 
         $$ = new NodeDebug($2);
@@ -85,6 +90,8 @@ Expr : TINT_LIT
      | Expr TSLASH Expr
      { $$ = new NodeBinOp(NodeBinOp::DIV, $1, $3); }
      | TLPAREN Expr TRPAREN { $$ = $2; }
+     | Expr TQUES Expr TCOL Expr
+     { $$ = new NodeTernOp($1, $3, $5); }
      ;
 
 %%

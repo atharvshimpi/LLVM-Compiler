@@ -69,6 +69,15 @@ struct NodeDecl : public Node {
     llvm::Value *llvm_codegen(LLVMCompiler *compiler);
 };
 
+struct NodeDecl2 : public Node {
+    std::string identifier;
+    Node *expression;
+
+    NodeDecl2(std::string id, Node *expr);
+    std::string to_string();
+    llvm::Value *llvm_codegen(LLVMCompiler *compiler);
+};
+
 /**
     Node for `dbg` statements
 */
@@ -87,6 +96,17 @@ struct NodeIdent : public Node {
     std::string identifier;
 
     NodeIdent(std::string ident);
+    std::string to_string();
+    llvm::Value *llvm_codegen(LLVMCompiler *compiler);
+};
+
+/*
+    Node for Ternary operations
+*/
+struct NodeTernOp : public Node {
+    Node *condition, *true_expression, *false_expression;
+
+    NodeTernOp(Node *condition, Node *true_expr, Node *false_expr);
     std::string to_string();
     llvm::Value *llvm_codegen(LLVMCompiler *compiler);
 };

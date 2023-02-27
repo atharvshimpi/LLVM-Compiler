@@ -137,11 +137,31 @@ Value *NodeDecl::llvm_codegen(LLVMCompiler *compiler) {
     return compiler->builder.CreateStore(expr, alloc);
 }
 
+Value *NodeDecl2::llvm_codegen(LLVMCompiler *compiler) {
+    Value *expr = expression->llvm_codegen(compiler);
+
+    IRBuilder<> temp_builder(
+        &MAIN_FUNC->getEntryBlock(),
+        MAIN_FUNC->getEntryBlock().begin()
+    );
+
+    AllocaInst *alloc = temp_builder.CreateAlloca(compiler->builder.getInt32Ty(), 0, identifier);
+
+    compiler->locals[identifier] = alloc;
+
+    return compiler->builder.CreateStore(expr, alloc);
+}
+
 Value *NodeIdent::llvm_codegen(LLVMCompiler *compiler) {
     AllocaInst *alloc = compiler->locals[identifier];
 
     // if your LLVM_MAJOR_VERSION >= 14
     return compiler->builder.CreateLoad(compiler->builder.getInt32Ty(), alloc, identifier);
+}
+
+Value *NodeTernOp::llvm_codegen(LLVMCompiler *compiler)
+{
+    return NULL;
 }
 
 #undef MAIN_FUNC
