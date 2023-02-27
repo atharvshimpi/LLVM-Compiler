@@ -61,6 +61,10 @@ Stmt : TLET TIDENT TEQUAL Expr
             $$ = new NodeDecl($2, $4);
         }
      }
+     | TIDENT TEQUAL Expr
+     {
+        $$ = new NodeDecl($1,$3);
+     }
      | TDBG Expr
      { 
         $$ = new NodeDebug($2);
