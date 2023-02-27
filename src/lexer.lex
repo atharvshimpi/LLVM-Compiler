@@ -17,6 +17,8 @@ extern int yyerror(std::string msg);
 "("       { return TLPAREN; }
 ")"       { return TRPAREN; }
 "="       { return TEQUAL; }
+"?"       { return TQUES; }
+":"       { return TCOL; }
 "dbg"     { return TDBG; }
 "let"     { return TLET; }
 [0-9]+    { yylval.lexeme = std::string(yytext); return TINT_LIT; }
@@ -37,6 +39,8 @@ std::string token_to_string(int token, const char *lexeme) {
         case TLPAREN: s = "TLPAREN"; break;
         case TRPAREN: s = "TRPAREN"; break;
         case TEQUAL: s = "TEQUAL"; break;
+        case TQUES: s = "TQUES"; break;
+        case TCOL: s = "TCOL"; break;
         
         case TDBG: s = "TDBG"; break;
         case TLET: s = "TLET"; break;

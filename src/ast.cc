@@ -63,6 +63,16 @@ std::string NodeDecl::to_string() {
     return "(let " + identifier + " " + expression->to_string() + ")";
 }
 
+NodeDecl2::NodeDecl2(std::string id, Node *expr) {
+    type = ASSN;
+    identifier = id;
+    expression = expr;
+}
+
+std::string NodeDecl2::to_string() {
+    return "(assign " + identifier + " " + expression->to_string() + ")";
+}
+
 NodeDebug::NodeDebug(Node *expr) {
     type = DBG;
     expression = expr;
@@ -77,4 +87,15 @@ NodeIdent::NodeIdent(std::string ident) {
 }
 std::string NodeIdent::to_string() {
     return identifier;
+}
+
+NodeTernOp::NodeTernOp(Node* c,Node* t,Node* f)
+{
+    condition=c;
+    true_expression=t;
+    false_expression=f;
+}
+std::string NodeTernOp::to_string()
+{
+    return "(?: "+ condition->to_string()+ " "+true_expression->to_string()+" "+false_expression->to_string()+")";
 }
