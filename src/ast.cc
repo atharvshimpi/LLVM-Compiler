@@ -92,10 +92,10 @@ std::string NodeIdent::to_string() {
 NodeTernOp::NodeTernOp(Node* c,Node* t,Node* f)
 {
     condition=c;
-    true_expression=t;
-    false_expression=f;
+    true_expr=t;
+    false_expr=f;
 }
 std::string NodeTernOp::to_string()
 {
-    return "(?: "+ condition->to_string()+ " "+true_expression->to_string()+" "+false_expression->to_string()+")";
+    return "(?: "+ condition->to_string()+ " "+true_expr->to_string()+" "+false_expr->to_string()+")";
 }

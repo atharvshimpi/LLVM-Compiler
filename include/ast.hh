@@ -104,7 +104,7 @@ struct NodeIdent : public Node {
     Node for Ternary operations
 */
 struct NodeTernOp : public Node {
-    Node *condition, *true_expression, *false_expression;
+    Node *condition, *true_expr, *false_expr;
 
     NodeTernOp(Node *condition, Node *true_expr, Node *false_expr);
     std::string to_string();
