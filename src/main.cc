@@ -9,7 +9,8 @@
 #include "parser.hh"
 #include "ast.hh"
 #include "llvmcodegen.hh"
- 
+using namespace std;
+
 extern FILE *yyin;
 extern int yylex();
 extern char *yytext;
@@ -19,8 +20,8 @@ extern FILE *fooout;
 extern int foolex();
 extern char *footext;
  
-extern std::string key;
-extern std::unordered_map<std::string, std::string> map;
+extern string key;
+extern unordered_map<string, string> map;
 extern int flag;
  
 NodeStmts *final_values;
@@ -51,17 +52,17 @@ int parse_arguments(int argc, char *argv[]) {
 		}
 	} 
 	
-	std::cerr << "Usage:\nEach of the following options halts the compilation process at the corresponding stage and prints the intermediate output:\n\n";
-	std::cerr << "\t`./bin/base <file_name> -l`, to tokenize the input and print the token stream to stdout\n";
-	std::cerr << "\t`./bin/base <file_name> -p`, to parse the input and print the abstract syntax tree (AST) to stdout\n";
-	std::cerr << "\t`./bin/base <file_name> -s`, to compile the file to LLVM assembly and print it to stdout\n";
-	std::cerr << "\t`./bin/base <file_name> -o <output>`, to compile the file to LLVM bitcode and write to <output>\n";
+	cerr << "Usage:\nEach of the following options halts the compilation process at the corresponding stage and prints the intermediate output:\n\n";
+	cerr << "\t`./bin/base <file_name> -l`, to tokenize the input and print the token stream to stdout\n";
+	cerr << "\t`./bin/base <file_name> -p`, to parse the input and print the abstract syntax tree (AST) to stdout\n";
+	cerr << "\t`./bin/base <file_name> -s`, to compile the file to LLVM assembly and print it to stdout\n";
+	cerr << "\t`./bin/base <file_name> -o <output>`, to compile the file to LLVM bitcode and write to <output>\n";
 	return ARG_FAIL;
 }
  
-bool cycle_check(std::unordered_map<std::string, std::string> m) {
+bool cycle_check(unordered_map<string, string> m) {
 	for(auto i: m) {
-		std::string ptr = i.first;
+		string ptr = i.first;
 		while(m.find(ptr) != m.end()) {
 			ptr = m[ptr];
 			if(ptr == i.first) return true;
@@ -74,7 +75,7 @@ void preprocess() {
 	// Actual Pre
 	int count;
 	int token;
-	std::string contents;
+	string contents;
 	
 	// Run preprocessor until no more macros can be expanded
 	// Preprocessor works on a "temp" file which is removed at the end
@@ -87,47 +88,49 @@ void preprocess() {
 		// Run lexer on program (macro replacing and comment removal)
 		do {
 			token = foolex();
-			std::string temp = footext;
+			string temp = footext;
  
 			// Every time a macro is added, check for cycles
 			if(token == 5 && cycle_check(map)) {
-				std::cerr<<"Cycle detected in #def statements"<<std::endl;
+				cerr << "Cycle detected in #def statements" << "\n";
 				remove("temp");
 				fclose(fooin);
-				exit(1);
+				exit(EXIT_FAILURE);
 			}
  
 			// Every time a word is taken in check if it matches macro
-			if(token == 3 && map.find(temp) != map.end()) {
+			if(token == 3 && map.find(temp)!= map.end()) {
 				count++;
 				temp = map[temp];
 			}
-			if(token==8)
-			{
-				std::cerr<<"elif before ifdef"<<std::endl;
+
+			if(token == 8) {
+				cerr << "elif before ifdef" << "\n";
 				remove("temp");
 				fclose(fooin);
-				exit(1);
+				exit(EXIT_FAILURE);
 			}
-			if(token==9)
-			{
-				std::cerr<<"endif before ifdef"<<std::endl;
+
+			if(token == 9) {
+				cerr << "endif before ifdef" << "\n";
 				remove("temp");
 				fclose(fooin);
-				exit(1);
+				exit(EXIT_FAILURE);
 			}
-			if(token==11){
-				std::cerr<<"else before ifdef"<<std::endl;
+
+			if(token == 11) {
+				cerr << "else before ifdef" << "\n";
 				remove("temp");
 				fclose(fooin);
-				exit(1);
+				exit(EXIT_FAILURE);
 			}
+
 			contents += temp;
  
 		} while(token != 0);
  
-		std::ofstream otemp("temp");
-		otemp<<contents;
+		ofstream otemp("temp");
+		otemp << contents;
 		otemp.close();
 	} while(count > 0);
 	
@@ -135,43 +138,43 @@ void preprocess() {
 	contents = "";
 	do {
 		token = foolex();
-		std::string temp = footext;
-		if(token != 1 && token != 2 && token != 5 && token !=7 && token!=6 && token!=10)
+		string temp = footext;
+		if(token != 1 && token != 2 && token != 5 && token != 7 && token != 6 && token != 10)
 			contents += temp;
  
 	} while(token != 0);
  
-	if(flag!=0){
-		std::cerr<<"\nno endif"<<std::endl;
+	if(flag != 0){
+		cerr << "\nno endif" << "\n";
 		remove("temp");
 		fclose(fooin);
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
  
 	// Printing final preprocessed code
-	std::cout<<"PRE"<<std::endl<<contents<<std::endl;
+	cout << "PRE" << "\n" << contents << "\n";
 	
 	fclose(fooin);
  
-	std::ofstream ofile("temp");
-	ofile<<contents;
+	ofstream ofile("temp");
+	ofile << contents;
 	ofile.close();
 }
  
 int main(int argc, char *argv[]) {
 	int arg_option = parse_arguments(argc, argv);
 	if (arg_option == ARG_FAIL) {
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
  
 	// Copying main file to temp for preprocessing
-	std::string file_name(argv[1]);
+	string file_name(argv[1]);
  
-	std::ifstream itemp(file_name);
-	std::ofstream otemp("temp");
-	std::string line;
+	ifstream itemp(file_name);
+	ofstream otemp("temp");
+	string line;
 	while (getline(itemp, line)) {
-		otemp << line << std::endl;
+		otemp << line << "\n";
 	}
 	itemp.close();
 	otemp.close();
@@ -183,7 +186,7 @@ int main(int argc, char *argv[]) {
  
 	// For debugging, prints tokens
 	if (arg_option == ARG_OPTION_L) {
-		extern std::string token_to_string(int token, const char *lexeme);
+		extern string token_to_string(int token, const char *lexeme);
  
 		while (true) {
 			int token = yylex();
@@ -191,7 +194,7 @@ int main(int argc, char *argv[]) {
 				break;
 			}
  
-			std::cout << token_to_string(token, yytext) << "\n";
+			cout << token_to_string(token, yytext) << "\n";
 		}
 		fclose(yyin);
 		return 0;
@@ -207,8 +210,8 @@ int main(int argc, char *argv[]) {
  
 	if(final_values) {
 		if (arg_option == ARG_OPTION_P) {
-			std::cout << final_values->to_string() << std::endl;
-			return 0;
+			cout << final_values->to_string() << "\n";
+			return EXIT_SUCCESS;
 		}
 		
         llvm::LLVMContext context;
@@ -217,11 +220,11 @@ int main(int argc, char *argv[]) {
         if (arg_option == ARG_OPTION_S) {
 			compiler.dump();
         } else {
-            compiler.write(std::string(argv[3]));
+            compiler.write(string(argv[3]));
 		}
 	} else {
-	 	std::cerr << "empty program";
+	 	cerr << "empty program";
 	}
  
-    return 0;
+    return EXIT_SUCCESS;
 }

@@ -1,7 +1,7 @@
 /* just like Unix wc */
 %option noyywrap
 %option prefix="foo"
- 
+
 %x comment
 %x comment2
 %x DEFINE
@@ -12,7 +12,7 @@
 %x ELSE
 %x ENDIF
 %x SKIP
- 
+
 %{
 #include <string>
 #include<iostream>
@@ -22,7 +22,7 @@ using namespace std;
  
 string key;
 unordered_map <string, string> map;
-int flag=0, val=0;
+int flag = 0, val = 0;
 %}
 %%
  
@@ -41,10 +41,10 @@ int flag=0, val=0;
  
 "#ifdef " {BEGIN(IFDEF); return 6;}
 <IFDEF>[a-zA-Z][a-zA-Z0-9]* {
-    val=1;
-    key=yytext;
+    val = 1;
+    key = yytext;
     if(map.find(key) != map.end()) {
-        flag=1;
+        flag = 1;
     } else {
         BEGIN(SKIP);
     }
@@ -55,13 +55,13 @@ int flag=0, val=0;
  
 "#elif " {BEGIN(ELIF); return 6;}
 <ELIF>[a-zA-Z][a-zA-Z0-9]* {
-    if(val==0){
+    if(val == 0){
         return 8;
     }
-    key=yytext;
-    val=2;
-    if(map.find(key) != map.end() && flag==0) {
-        flag=1;
+    key = yytext;
+    val = 2;
+    if(map.find(key)!= map.end() && flag == 0) {
+        flag = 1;
     } else {
         BEGIN(SKIP);
     }
@@ -72,12 +72,12 @@ int flag=0, val=0;
  
 "#else" {BEGIN(ELSE); return 6;}
 <ELSE>[ \n]+ {
-    if(val==0 || val==1){
+    if(val == 0 || val == 1){
         return 11;
     }
-    val=3;
-    if(flag==0) {
-        flag=1;
+    val = 3;
+    if(flag == 0) {
+        flag = 1;
         BEGIN(INITIAL);
     } else {
         BEGIN(SKIP);
@@ -86,7 +86,7 @@ int flag=0, val=0;
 }
  
 "#endif" {BEGIN(ENDIF); return 6;}
-<ENDIF>[ \n]+ {if(val==0){return 9;} flag=0; BEGIN(INITIAL); return 6;}
+<ENDIF>[ \n]+ {if(val == 0){return 9;} flag = 0; BEGIN(INITIAL); return 6;}
  
 <SKIP>[^(?!.*(#elif|#else|#endif)).*$] {return 6;}
 <SKIP>"#else" {BEGIN(ELSE); return 6;}
