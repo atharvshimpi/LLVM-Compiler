@@ -1,0 +1,4 @@
+(begin (begin (let cond 15) (let b 10)) (if-else ( - cond ( * 5 3 ) )
+((begin (let cond 100) (dbg 100)))
+((begin (let cond 50000) (dbg 50000)))
+))
