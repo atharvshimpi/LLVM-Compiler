@@ -1,0 +1,8 @@
+let a:short = 1000
+let b:int = 1000000000
+let c:int = 1000000000
+let d:long = a+b+c
+dbg d;
+
+
+//overflow

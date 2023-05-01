@@ -1,0 +1,18 @@
+let a:int 10;
+dbg a;
+if a {
+	let b:int =25;
+		dbg b;
+}
+else{
+	if b{
+		dbg a+2;
+		}
+	else{
+	let d: int = 60;
+	dbg d;
+		}
+
+}
+
+//error

@@ -1,0 +1,15 @@
+let a : long = 100;
+let b : long = 20;
+
+if a*b {
+	  let c : long = a+b*a+b*b+a;
+		dbg c*a;
+	 let d : int =32768;
+	}
+else{
+	let c : short = a*b+a;
+	dbg c;
+	let d : int=1;
+	dbg d;
+	}
+

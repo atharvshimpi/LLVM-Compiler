@@ -137,6 +137,23 @@ struct NodeIdent : public Node
     std::string to_string();
     llvm::Value *llvm_codegen(LLVMCompiler *compiler);
 };
+
+/*
+    Node for Func Declaration
+
+*/
+
+struct NodeFuncDecl : public Node
+{
+    Node *funcName;
+    Node *param;
+    Node *finBody;
+
+    NodeFuncDecl(Node *funcName, Node *param, Node *finBody);
+    std::string to_string();
+    llvm::Value *llvm_codegen(LLVMCompiler *compiler);
+};
+
 /*
     Node for If Else
 

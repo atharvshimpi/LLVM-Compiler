@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
 	if(final_values) {
 		if (arg_option == ARG_OPTION_P) {
 			std::cout << final_values->to_string() << std::endl;
-			std::ofstream filestream("testout.txt");
+			std::ofstream filestream("opt.txt");
 			if (filestream.is_open())
 			{
 				filestream << final_values->to_string();

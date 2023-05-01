@@ -178,6 +178,18 @@ std::string NodeIdent::to_string()
 {
     return identifier;
 }
+
+NodeFuncDecl::NodeFuncDecl(Node *id, Node *par, Node *body) {
+    funcName = id;
+    param = par;
+    finBody = body;
+}
+
+std::string NodeFuncDecl::to_string()
+{
+    return "(fun " + funcName->to_string() + "(" + param->to_string() + ") : long {\n\t" + finBody->to_string() + "\n}";
+}
+
 NodeIfElse::NodeIfElse(Node *cond, Node *tBody, Node *fBody)
 {
     condition = cond;
@@ -197,12 +209,16 @@ std::string NodeIfElse::to_string()
             c = 1;
     }
     std::string out;
-    if (c == 0 && s != "0")
-    {
-        out += "\n(if-else " + condition->to_string() + " \n";
+    if (c == 0 && s != "0") {
         out += ifBody->to_string() + "\n";
+        return out;
+    } else if(c == 0 && s == "0") {
+        out += elseBody->to_string() + "\n";
+        return out;
     }
 
+    out += "\n(if-else " + condition->to_string() + " \n";
+    out += ifBody->to_string() + "\n";
     out += elseBody->to_string() + "\n)";
     return out;
 }

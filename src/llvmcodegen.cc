@@ -157,6 +157,11 @@ Value *NodeIdent::llvm_codegen(LLVMCompiler *compiler)
     return compiler->builder.CreateLoad(compiler->builder.getInt64Ty(), alloc, identifier);
 }
 
+Value *NodeFuncDecl::llvm_codegen(LLVMCompiler *compiler)
+{
+    return nullptr;
+}
+
 Value *NodeIfElse::llvm_codegen(LLVMCompiler *compiler)
 {
     // Geting the Value of Condition after evaluation(If an Expression)

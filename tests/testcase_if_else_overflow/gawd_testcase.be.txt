@@ -1,0 +1,25 @@
+let a:int = 32768;
+dbg a;
+if a{
+	let b:short = a-1;
+	dbg b;
+	if b {
+		let c :long = a+20;
+		dbg a;		
+		}
+	else{
+		let d:short = c-100;
+		let e:int = a+2;
+		dbg e;
+		}
+	}
+else{	
+	let s: long=a-40;
+dbg s;
+	}
+
+dbg a;
+let c: int =a+8;
+dbg c;
+
+

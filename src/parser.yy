@@ -35,13 +35,13 @@ int yyerror(std::string msg);
  
 %token TPLUS TDASH TSTAR TSLASH
 %token <lexeme> TINT_LIT TIDENT TINT_TYPE TSHORT_TYPE TLONG_TYPE 
-%token INT TLET TDBG
+%token TLET TDBG
 %token TSCOL TLPAREN TRPAREN TEQUAL TCOLON
 %token TIF TELSE TLCURL TRCURL TFUN TMAIN
  
  
-%type <node> ExprInt ExprShort ExprLong Expr Stmt IF TTYPE LCurlTxt RCurlTxt
-%type <stmts> Program StmtList
+%type <node> ExprInt ExprShort ExprLong Expr Stmt IF TTYPE LCurlTxt RCurlTxt FuncDef
+%type <stmts> Program StmtList ParamList 
  
 %left TPLUS TDASH
 %left TSTAR TSLASH
@@ -252,7 +252,7 @@ Stmt : TLET TIDENT TCOLON TSHORT_TYPE TEQUAL ExprShort
      {
         if(symbolTable1.contains($1))
         {
-            std::pair<int,int> p=symbolTable1.value($1);
+            std::pair<int, int> p =symbolTable1.value($1);
             long long D=FindAns($3->to_string(),p.second);
             if(D==0){
                 yyerror("TypeCasting Error\n");
@@ -283,7 +283,15 @@ Stmt : TLET TIDENT TCOLON TSHORT_TYPE TEQUAL ExprShort
      }
      | IF
      | //empty
-     {}
+     {
+        $$ = new NodeLong(0);
+     }
+     |
+     FuncDef
+     {
+        //empty
+        $$ = new NodeLong(0);
+     }
      ;
  
 IF: TIF ExprShort LCurlTxt StmtList RCurlTxt TELSE LCurlTxt StmtList  RCurlTxt
@@ -294,8 +302,6 @@ IF: TIF ExprShort LCurlTxt StmtList RCurlTxt TELSE LCurlTxt StmtList  RCurlTxt
             long long ans=solver(a);
             Node* nd = new NodeShort(ans);
             $$ = new NodeIfElse(nd,$4,$8);
-
-            
         }
         else
             $$ = new NodeIfElse($2,$4,$8);
@@ -308,8 +314,6 @@ IF: TIF ExprShort LCurlTxt StmtList RCurlTxt TELSE LCurlTxt StmtList  RCurlTxt
             long long ans=solver(a);
             Node* nd = new NodeShort(ans);
             $$ = new NodeIfElse(nd,$4,$9);
-
-            
         }
         else
             $$ = new NodeIfElse($2,$4,$9);
@@ -322,8 +326,6 @@ IF: TIF ExprShort LCurlTxt StmtList RCurlTxt TELSE LCurlTxt StmtList  RCurlTxt
             long long ans=solver(a);
             Node* nd = new NodeShort(ans);
             $$ = new NodeIfElse(nd,$4,$8);
-
-            
         }
         else
             $$ = new NodeIfElse($2,$4,$8);
@@ -336,8 +338,6 @@ IF: TIF ExprShort LCurlTxt StmtList RCurlTxt TELSE LCurlTxt StmtList  RCurlTxt
             long long ans=solver(a);
             Node* nd = new NodeShort(ans);
             $$ = new NodeIfElse(nd,$4,$9);
-
-            
         }
         else
             $$ = new NodeIfElse($2,$4,$9);
@@ -350,14 +350,12 @@ IF: TIF ExprShort LCurlTxt StmtList RCurlTxt TELSE LCurlTxt StmtList  RCurlTxt
             long long ans=solver(a);
             Node* nd = new NodeInt(ans);
             $$ = new NodeIfElse(nd,$4,$8);
-
-            
         }
         else
             $$ = new NodeIfElse($2,$4,$8);
     } 
     |
-    TIF ExprInt LCurlTxt StmtList RCurlTxt TELSE LCurlTxt StmtList  RCurlTxt
+    TIF ExprInt LCurlTxt StmtList RCurlTxt TELSE LCurlTxt StmtList RCurlTxt
     {  
         std::string a=$2->to_string();
         if(checkNotAlpha(a))
@@ -365,8 +363,6 @@ IF: TIF ExprShort LCurlTxt StmtList RCurlTxt TELSE LCurlTxt StmtList  RCurlTxt
             long long ans=solver(a);
             Node* nd = new NodeInt(ans);
             $$ = new NodeIfElse(nd,$4,$8);
-
-            
         }
         else
             $$ = new NodeIfElse($2,$4,$8);
@@ -379,8 +375,6 @@ IF: TIF ExprShort LCurlTxt StmtList RCurlTxt TELSE LCurlTxt StmtList  RCurlTxt
             long long ans=solver(a);
             Node* nd = new NodeInt(ans);
             $$ = new NodeIfElse(nd,$4,$9);
-
-            
         }
         else
             $$ = new NodeIfElse($2,$4,$9);
@@ -394,8 +388,6 @@ IF: TIF ExprShort LCurlTxt StmtList RCurlTxt TELSE LCurlTxt StmtList  RCurlTxt
             long long ans=solver(a);
             Node* nd = new NodeInt(ans);
             $$ = new NodeIfElse(nd,$4,$9);
-
-            
         }
         else
             $$ = new NodeIfElse($2,$4,$9);
@@ -408,9 +400,7 @@ IF: TIF ExprShort LCurlTxt StmtList RCurlTxt TELSE LCurlTxt StmtList  RCurlTxt
         {
             long long ans=solver(a);
             Node* nd = new NodeLong(ans);
-            $$ = new NodeIfElse(nd,$4,$8);
-
-            
+            $$ = new NodeIfElse(nd,$4,$8); 
         }
         else
             $$ = new NodeIfElse($2,$4,$8);
@@ -424,8 +414,6 @@ IF: TIF ExprShort LCurlTxt StmtList RCurlTxt TELSE LCurlTxt StmtList  RCurlTxt
             long long ans=solver(a);
             Node* nd = new NodeLong(ans);
             $$ = new NodeIfElse(nd,$4,$8);
-
-            
         }
         else
             $$ = new NodeIfElse($2,$4,$8);
@@ -464,6 +452,36 @@ IF: TIF ExprShort LCurlTxt StmtList RCurlTxt TELSE LCurlTxt StmtList  RCurlTxt
 LCurlTxt: TLCURL { symbolTable2.inc(); }
  
 RCurlTxt: TRCURL{ symbolTable2.dec(); }
+
+FuncDef: TFUN TIDENT TLPAREN ParamList TRPAREN TCOLON TINT_TYPE TLCURL StmtList TRCURL
+    {
+        if(symbolTable2.contains($2)) {
+            yyerror("Function Redeclaration!");
+        } else {
+            symbolTable2.insert($2, 1);
+            $$ = new NodeFuncDecl($2,$4,$9);
+        }
+    }
+    ;
+
+ParamList: Stmt                
+        { 
+            $$ = new NodeStmts(); 
+            $$->push_back($1); 
+        }
+        | ParamList TSCOL Stmt 
+        { 
+            $$->push_back($3); 
+        }
+        | ParamList Stmt
+        {
+            $$->push_back($2);
+        }
+        | ParamList TSCOL IF
+        {
+            $$->push_back($3);
+        }
+        ;
 
 ExprShort:TINT_LIT               
      { 
@@ -539,10 +557,9 @@ ExprInt:TINT_LIT
     }
     | TIDENT
      { 
-        if(symbolTable.contains($1))
-            {$$ = new NodeIdent($1);
-            } 
-        else
+        if(symbolTable.contains($1)) {
+            $$ = new NodeIdent($1);
+        } else
             yyerror("using undeclared variable.\n");
      }
      | ExprInt TPLUS ExprInt
@@ -597,8 +614,9 @@ ExprLong:TINT_LIT
     }
     | TIDENT
      { 
-        if(symbolTable.contains($1))
+        if(symbolTable.contains($1)) {
             $$ = new NodeIdent($1); 
+        }
         else
             yyerror("using undeclared variable.\n");
      }
@@ -617,13 +635,9 @@ Expr : TINT_LIT
      { $$ = new NodeLong(stoll($1)); }
      | TIDENT
      { 
-        if(symbolTable.contains($1))
-        {
+        if(symbolTable2.contains($1)) {
             $$ = new NodeIdent($1);
-            
-        }
- 
-        else
+        } else
             yyerror("using undeclared variable.\n");
      }
      | Expr TPLUS Expr
